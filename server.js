@@ -25,15 +25,15 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
 app
-  .get('/api', (req, res) => {
+  .get('/', (req, res) => {
     res.status(200).json({message:'send POST data'})
   })
-  .post('/api', (req, res) => {
+  .post('/', (req, res) => {
     console.log(req.body);    
     session  = driver.session()
     
     session
-      .run('MATCH (a:lemma) RETURN a', {}).then(results => {
+      .run("UNWIND {query} AS words MATCH (n:Inflection)-[r:INFLECTS_TO]-(m:Lexeme) WHERE n.label = words.lexeme RETURN words.id AS element, properties(n) AS inflection, properties(m) AS lemma", {query: req.body}).then(results => {
         console.log('results!', results);
         session.close();
         res.status(200).json(results.records)

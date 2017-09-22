@@ -24,20 +24,24 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-app.post('/api', (req, res) => {
-  console.log(request.body);    
-  session  = driver.session()
-  
-  session
-    .run('MATCH (a:lemma) RETURN a', {}).then(results => {
-      console.log('results!', results);
-      session.close();
-      res.status(200).json(results.records)
-    }).catch(err => {
-      console.log(err)
-      session.close();
-      res.status(400).json({message: 'error!!!'})
-    });
+app
+  .get('/api', (req, res) => {
+    res.status(200).json({message:'send POST data'})
+  })
+  .post('/api', (req, res) => {
+    console.log(req.body);    
+    session  = driver.session()
+    
+    session
+      .run('MATCH (a:lemma) RETURN a', {}).then(results => {
+        console.log('results!', results);
+        session.close();
+        res.status(200).json(results.records)
+      }).catch(err => {
+        console.log(err)
+        session.close();
+        res.status(400).json({message: 'error!!!'})
+      });
 });
 
 
